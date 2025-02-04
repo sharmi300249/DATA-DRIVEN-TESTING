@@ -1,0 +1,38 @@
+package codtech;
+
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+import java.lang.reflect.Method;
+
+public class LoginTest {
+
+    @DataProvider(name = "loginData")
+    public Object[][] getData(Method method) {
+        String excelPath = "D:/LoginData.xlsx"; // Use the absolute path to the file
+        ExcelUtils excel = new ExcelUtils(excelPath, "Sheet1");
+
+        int rowCount = excel.getRowCount();
+        int colCount = excel.getColCount();
+
+        if (rowCount == 0 || colCount == 0) {
+            System.out.println("No data found in the sheet.");
+            return new Object[0][0];
+        }
+
+        Object data[][] = new Object[rowCount - 1][colCount];
+
+        for (int i = 1; i < rowCount; i++) {
+            for (int j = 0; j < colCount; j++) {
+                data[i - 1][j] = excel.getCellData(i, j);
+            }
+        }
+        return data;
+    }
+
+    @Test(dataProvider = "loginData")
+    public void testLogin(String username, String password) {
+        System.out.println("Testing login with: " + username + " / " + password);
+        // Add your login test logic here
+        // Example: Assert.assertTrue(loginPage.login(username, password));
+    }
+}
