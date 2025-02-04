@@ -1,0 +1,56 @@
+
+package codtech;
+
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+public class ExcelUtils {
+    private XSSFWorkbook workbook;
+    private XSSFSheet sheet;
+
+    public ExcelUtils(String excelPath, String sheetName) {
+        try {
+            FileInputStream fis = new FileInputStream(excelPath);
+            workbook = new XSSFWorkbook(fis);
+            sheet = workbook.getSheet(sheetName);
+            if(sheet == null) {
+                System.out.println("Sheet not found: " + sheetName);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + excelPath);
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int getRowCount() {
+        if(sheet == null) {
+            System.out.println("Sheet is null. Cannot get row count.");
+            return 0;
+        }
+        return sheet.getPhysicalNumberOfRows();
+    }
+
+    public int getColCount() {
+        if(sheet == null) {
+            System.out.println("Sheet is null. Cannot get column count.");
+            return 0;
+        }
+        return sheet.getRow(0).getPhysicalNumberOfCells();
+    }
+
+    public String getCellData(int rowNum, int colNum) {
+        if(sheet == null) {
+            System.out.println("Sheet is null. Cannot get cell data.");
+            return "";
+        }
+        DataFormatter formatter = new DataFormatter();
+        return formatter.formatCellValue(sheet.getRow(rowNum).getCell(colNum));
+    }
+}
